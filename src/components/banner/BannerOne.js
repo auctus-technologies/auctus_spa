@@ -33,7 +33,7 @@ function BannerOne() {
                                     We help businesses and startups build websites, mobile apps, automation bots, and scalable tech solutions.
                                 </p>
                                 <a
-                                    href="service.html"
+                                    href="/service"
                                     className="rts-btn btn-primary" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="700"
                                 >
                                     View Solutions
