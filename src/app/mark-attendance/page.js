@@ -58,6 +58,15 @@ function SuccessModal({ data, onClose }) {
           <span className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-medium">
             {data.department}
           </span>
+          {data.match_confidence != null && (
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+              data.match_confidence >= 60 ? 'bg-emerald-50 text-emerald-700' :
+              data.match_confidence >= 40 ? 'bg-yellow-50 text-yellow-700' :
+              'bg-orange-50 text-orange-700'
+            }`}>
+              {data.match_confidence}% match
+            </span>
+          )}
         </div>
 
         <div className="border-t border-gray-100 pt-3 space-y-2.5">
