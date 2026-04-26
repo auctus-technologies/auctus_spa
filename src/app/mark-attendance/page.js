@@ -297,6 +297,8 @@ export default function MarkAttendancePage() {
 
       if (res.status === 404 || data.error === 'user_not_found') {
         setModal({ type: 'error', message: 'User not found' });
+      } else if (data.error === 'multiple_faces') {
+        setModal({ type: 'error', message: 'Multiple faces detected. Please ensure only your face is visible.' });
       } else if (data.error === 'face_not_recognized') {
         setModal({ type: 'error', message: 'Your face is not recognized' });
       } else if (res.status === 409 || data.error === 'already_completed') {
@@ -313,7 +315,8 @@ export default function MarkAttendancePage() {
     }
   };
 
-  const closeModal = () => { setModal(null); setMobile(''); };
+  const closeModal = () => { setModal(null); setMobile(''); };   // success: clear input
+  const dismissModal = () => setModal(null);                     // error/retry: keep input
 
   // ── Overlay location (truncated to first 2 segments for readability) ────
   const shortAddress = address === 'Fetching location…' || address === 'Location unavailable'
@@ -538,9 +541,9 @@ export default function MarkAttendancePage() {
       {/* ══ Modal overlay ════════════════════════════════════════════════ */}
       {modal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          {modal.type === 'success'      && <SuccessModal    data={modal}            onClose={closeModal} />}
-          {modal.type === 'error'        && <ErrorModal      message={modal.message} onClose={closeModal} />}
-          {modal.type === 'already_done' && <AlreadyDoneModal message={modal.message} onClose={closeModal} />}
+          {modal.type === 'success'      && <SuccessModal     data={modal}            onClose={closeModal} />}
+          {modal.type === 'error'        && <ErrorModal       message={modal.message} onClose={dismissModal} />}
+          {modal.type === 'already_done' && <AlreadyDoneModal message={modal.message} onClose={dismissModal} />}
         </div>
       )}
 
