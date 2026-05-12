@@ -1,13 +1,81 @@
 "use client"
+import { useState, useEffect } from "react";
 import BackToTop from "@/components/common/BackToTop";
 import FooterOne from "@/components/footer/FooterOne";
 import HeaderTwo from "@/components/header/HeaderTwo";
 import CtaSeven from "@/components/cta/CtaSeven";
 import Accordion from "react-bootstrap/Accordion";
+
+import { API_URL as API_BASE } from "@/app/dashboard/endpoint/endpoint";
+
+const DEPARTMENT_LABELS = {
+    management:  "Management",
+    development: "Development",
+    hr:          "Human Resources",
+    finance:     "Finance",
+    marketing:   "Marketing",
+    sales:       "Sales",
+};
+
+const ROLE_LABELS = {
+    manager:                        "Manager",
+    assistant_manager:              "Assistant Manager",
+    software_engineer:              "Software Engineer",
+    senior_developer:               "Senior Developer",
+    junior_developer:               "Junior Developer",
+    team_lead:                      "Team Lead",
+    qa_engineer:                    "QA Engineer",
+    devops_engineer:                "DevOps Engineer",
+    hr_manager:                     "HR Manager",
+    hr_executive:                   "HR Executive",
+    recruiter:                      "Recruiter",
+    talent_acquisition_specialist:  "Talent Acquisition Specialist",
+    hr_coordinator:                 "HR Coordinator",
+    finance_manager:                "Finance Manager",
+    accountant:                     "Accountant",
+    senior_accountant:              "Senior Accountant",
+    financial_analyst:              "Financial Analyst",
+    auditor:                        "Auditor",
+    marketing_manager:              "Marketing Manager",
+    digital_marketing_executive:    "Digital Marketing Executive",
+    seo_specialist:                 "SEO Specialist",
+    content_strategist:             "Content Strategist",
+    social_media_manager:           "Social Media Manager",
+    sales_manager:                  "Sales Manager",
+    sales_executive:                "Sales Executive",
+    business_development_executive: "Business Development Executive",
+    sales_coordinator:              "Sales Coordinator",
+};
+
+function getTags(opening) {
+    const tags = [];
+    if (opening.skills_required) {
+        opening.skills_required.split(",").forEach((s) => {
+            const t = s.trim();
+            if (t) tags.push(t);
+        });
+    }
+    if (tags.length === 0) {
+        if (opening.department) tags.push(DEPARTMENT_LABELS[opening.department] || opening.department);
+        if (opening.role) tags.push(ROLE_LABELS[opening.role] || opening.role);
+        if (opening.location) tags.push(opening.location);
+    }
+    return tags;
+}
+
 export default function Home() {
-    const styling = {
-        backgroundImage: `url(assets/images/career/03.webp)`,
-    };
+    const [openings, setOpenings] = useState([]);
+    const [loadingOpenings, setLoadingOpenings] = useState(true);
+    const [visibleCount, setVisibleCount] = useState(4);
+
+    useEffect(() => {
+        fetch(`${API_BASE}/openings?status=active&page_size=100`)
+            .then((r) => r.ok ? r.json() : Promise.reject())
+            .then((data) => setOpenings(data.openings || []))
+            .catch(() => setOpenings([]))
+            .finally(() => setLoadingOpenings(false));
+    }, []);
+
     return (
         <div className='#'>
             <HeaderTwo />
@@ -220,72 +288,92 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="row g-5 mt--30">
-                            <div className="col-lg-6 wow fadeInUp" data-wow-delay=".1s">
-                                <div className="single-job-opening-card">
-                                    <h4 className="title">Sales Person</h4>
-                                    <p>
-                                        <span>Responsibilities:</span> Identify and engage potential clients, understand their technology needs, present Auctus services effectively, and close deals. Build and maintain strong client relationships.
-                                    </p>
-                                    <p>
-                                        <span>Qualifications:</span> Proven sales experience, excellent communication and negotiation skills, understanding of IT services, ability to work independently and meet targets.
-                                    </p>
-                                    <div className="tag-wrapper">
-                                        <div className="single">
-                                            <span>Sales</span>
-                                        </div>
-                                        <div className="single">
-                                            <span>Business Development</span>
-                                        </div>
-                                        <div className="single">
-                                            <span>Client Relations</span>
-                                        </div>
-                                    </div>
-                                    <div className="bottom-area">
-                                        <div className="selary-range">
-                                            <p>
-                                                Competitive <span>+ Commission</span>
-                                            </p>
-                                        </div>
-                                        <a href="/apply" className="rts-btn btn-primary btn-bold">
-                                            Apply Now
-                                        </a>
-                                    </div>
+
+                        {loadingOpenings ? (
+                            <div className="row mt--30">
+                                <div className="col-lg-12 text-center">
+                                    <p style={{ color: "#888", fontSize: "16px" }}>Loading openings…</p>
                                 </div>
                             </div>
-                            <div className="col-lg-6 wow fadeInUp" data-wow-delay=".3s">
-                                <div className="single-job-opening-card">
-                                    <h4 className="title">HR (Human Resources)</h4>
-                                    <p>
-                                        <span>Responsibilities:</span> Handle recruitment and onboarding, manage employee relations, oversee performance management, coordinate training programs, and ensure compliance with labor laws.
-                                    </p>
-                                    <p>
-                                        <span>Qualifications:</span> Experience in HR management, strong interpersonal skills, knowledge of Indian labor laws, ability to handle confidential information with discretion.
-                                    </p>
-                                    <div className="tag-wrapper">
-                                        <div className="single">
-                                            <span>Human Resources</span>
-                                        </div>
-                                        <div className="single">
-                                            <span>Recruitment</span>
-                                        </div>
-                                        <div className="single">
-                                            <span>Employee Relations</span>
-                                        </div>
-                                    </div>
-                                    <div className="bottom-area">
-                                        <div className="selary-range">
-                                            <p>
-                                                Competitive <span>Based on Experience</span>
-                                            </p>
-                                        </div>
-                                        <a href="/apply" className="rts-btn btn-primary btn-bold">
-                                            Apply Now
-                                        </a>
-                                    </div>
+                        ) : openings.length === 0 ? (
+                            <div className="row mt--30">
+                                <div className="col-lg-12 text-center">
+                                    <p style={{ color: "#888", fontSize: "16px" }}>No openings at the moment. Check back soon!</p>
                                 </div>
                             </div>
-                        </div>
+                        ) : (
+                            <>
+                                <div className="row g-5 mt--30">
+                                    {openings.slice(0, visibleCount).map((opening, idx) => {
+                                        const tags = getTags(opening);
+                                        const delay = `${((idx % 2) * 0.2) + 0.1}s`;
+                                        return (
+                                            <div key={opening.id} className="col-lg-6 wow fadeInUp" data-wow-delay={delay} style={{ display: 'flex' }}>
+                                                <div className="single-job-opening-card" style={{ display: 'flex', flexDirection: 'column', width: '100%', overflow: 'hidden' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                                                        <h4 className="title" style={{ margin: 0 }}>{opening.job_title.replace(/\b\w/g, c => c.toUpperCase())}</h4>
+                                                        {opening.required_experience != null && (
+                                                            <span style={{ flexShrink: 0, marginLeft: '12px', background: '#f0faf9', color: '#00838f', border: '1.5px solid #b2dfdb', borderRadius: '20px', padding: '4px 12px', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                                                {opening.required_experience}+ yrs exp
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {opening.responsibilities && (
+                                                        <div style={{ margin: '0 0 8px' }}>
+                                                            <span style={{ fontWeight: 700 }}>Responsibilities:</span>
+                                                            <p style={{ margin: '2px 0 0', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word' }}>
+                                                                {opening.responsibilities}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {opening.qualification_required && (
+                                                        <div style={{ margin: '0 0 8px' }}>
+                                                            <span style={{ fontWeight: 700 }}>Qualifications:</span>
+                                                            <p style={{ margin: '2px 0 0', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word' }}>
+                                                                {opening.qualification_required}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {tags.length > 0 && (
+                                                        <div className="tag-wrapper">
+                                                            {tags.slice(0, 4).map((tag, i) => (
+                                                                <div key={i} className="single">
+                                                                    <span>{tag.charAt(0).toUpperCase() + tag.slice(1)}</span>
+                                                                </div>
+                                                            ))}
+                                                            {tags.length > 4 && (
+                                                                <div className="single">
+                                                                    <span>+{tags.length - 4}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                    <div className="bottom-area" style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end' }}>
+                                                        <a href={`/apply?id=${opening.id}`} className="rts-btn btn-primary btn-bold">
+                                                            Apply Now
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                {openings.length > visibleCount && (
+                                    <div className="row mt--40">
+                                        <div className="col-lg-12 text-center">
+                                            <button
+                                                onClick={() => setVisibleCount((c) => c + 4)}
+                                                className="rts-btn btn-primary btn-bold"
+                                                style={{ border: "none", cursor: "pointer" }}
+                                            >
+                                                Load More
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
                 {/* job opening area end */}

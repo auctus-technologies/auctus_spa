@@ -163,7 +163,7 @@ export default function Home() {
                             <div className="col-lg-12">
                                 <div className="google-map-wrapper">
                                     <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4144.982054808454!2d80.27152867530263!3d13.043970013287002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267407d3a5be9%3A0x9328cdfd5b3ed682!2sSingapore%20Hardwares%20and%20Interiors!5e1!3m2!1sen!2sin!4v1773130677078!5m2!1sen!2sin"
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.869680664744!2d80.27426720000001!3d13.043966099999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xa2177819881a221b%3A0x7cc6d82b77d38c04!2sAuctus%20Technologies!5e0!3m2!1sen!2sin!4v1778343989757!5m2!1sen!2sin"
                                         width={600}
                                         height={500}
                                         style={{ border: 0 }}

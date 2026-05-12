@@ -1,0 +1,9 @@
+@source "../**/*.{js,jsx,ts,tsx}";
+@source "../../**/*.{js,jsx,ts,tsx}";
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00838f;
+  --color-primary-dark: #006b75;
+}
