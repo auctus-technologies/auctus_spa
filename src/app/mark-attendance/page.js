@@ -58,13 +58,9 @@ function SuccessModal({ data, onClose }) {
           <span className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-medium">
             {data.department}
           </span>
-          {data.match_confidence != null && (
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-              data.match_confidence >= 60 ? 'bg-emerald-50 text-emerald-700' :
-              data.match_confidence >= 40 ? 'bg-yellow-50 text-yellow-700' :
-              'bg-orange-50 text-orange-700'
-            }`}>
-              {data.match_confidence}% match
+          {data.is_late && (
+            <span className="text-xs bg-red-50 text-red-600 px-2.5 py-1 rounded-full font-medium">
+              Late Check-in
             </span>
           )}
         </div>
@@ -299,6 +295,8 @@ export default function MarkAttendancePage() {
         setModal({ type: 'error', message: 'User not found' });
       } else if (data.error === 'multiple_faces') {
         setModal({ type: 'error', message: 'Multiple faces detected. Please ensure only your face is visible.' });
+      } else if (data.error === 'early_checkout') {
+        setModal({ type: 'error', message: data.message });
       } else if (data.error === 'face_not_recognized') {
         setModal({ type: 'error', message: 'Your face is not recognized' });
       } else if (res.status === 409 || data.error === 'already_completed') {
